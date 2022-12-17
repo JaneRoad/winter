@@ -3,12 +3,13 @@ package com.janeroad.service;
 import com.janeroad.winter.annotation.Autowired;
 import com.janeroad.winter.annotation.Component;
 import com.janeroad.winter.bean.BeanNameAware;
+import com.janeroad.winter.bean.InitializingBean;
 
 /**
  * @author janeroad
  */
 @Component("userService")
-public class UserService implements BeanNameAware {
+public class UserService implements BeanNameAware, InitializingBean {
 
     @Autowired
     private OrderService orderService;
@@ -22,5 +23,10 @@ public class UserService implements BeanNameAware {
     @Override
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        System.out.println("进入afterPropertiesSet()");
     }
 }

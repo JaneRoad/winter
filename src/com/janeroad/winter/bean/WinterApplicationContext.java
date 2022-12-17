@@ -113,14 +113,28 @@ public class WinterApplicationContext {
                 }
             }
 
-            // Aware回调
+            //Aware回调
             if (beanObject instanceof BeanNameAware){
                 ((BeanNameAware) beanObject).setBeanName(beanName);
             }
 
+            //初始化
+            if (beanObject instanceof InitializingBean){
+                ((InitializingBean) beanObject).afterPropertiesSet();
+            }
+
             return beanObject;
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
-                 InvocationTargetException e) {
+        } catch (InstantiationException e) {
+            System.out.println("InstantiationException: " + e);
+            throw new RuntimeException(e);
+        }catch (IllegalAccessException e) {
+            System.out.println("IllegalAccessException: " + e);
+            throw new RuntimeException(e);
+        }catch (NoSuchMethodException e) {
+            System.out.println("NoSuchMethodException: " + e);
+            throw new RuntimeException(e);
+        }catch (InvocationTargetException e) {
+            System.out.println("InvocationTargetException: " + e);
             throw new RuntimeException(e);
         }
     }
