@@ -11,6 +11,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,6 +25,8 @@ public class WinterApplicationContext {
     private final ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<String, Object> singletonBeanMap = new ConcurrentHashMap<>();
+
+    private final List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
 
     public WinterApplicationContext(Class configClass) {
         this.configClass = configClass;
@@ -56,6 +60,12 @@ public class WinterApplicationContext {
                             Class<?> clazz = classLoader.loadClass(className);
                             //如果类包含Component注解
                             if (clazz.isAnnotationPresent(Component.class)) {
+
+                                if (BeanPostProcessor.class.isAssignableFrom(clazz)){
+                                    BeanPostProcessor instance = (BeanPostProcessor) clazz.newInstance();
+                                    beanPostProcessorList.add(instance);
+                                }
+
                                 //获取beanName
                                 Component componentAnnotation = clazz.getAnnotation(Component.class);
                                 String beanName = componentAnnotation.value();
@@ -74,6 +84,13 @@ public class WinterApplicationContext {
                                 beanDefinitionMap.put(beanName, beanDefinition);
                             }
                         } catch (ClassNotFoundException e) {
+                            System.out.println("ClassNotFoundException: " + e);
+                            throw new RuntimeException(e);
+                        } catch (InstantiationException e) {
+                            System.out.println("InstantiationException: " + e);
+                            throw new RuntimeException(e);
+                        } catch (IllegalAccessException e) {
+                            System.out.println("IllegalAccessException: " + e);
                             throw new RuntimeException(e);
                         }
                     }
@@ -118,9 +135,20 @@ public class WinterApplicationContext {
                 ((BeanNameAware) beanObject).setBeanName(beanName);
             }
 
+            //遍历实现了beanPostProcessor的List，执行初始化前逻辑
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                beanPostProcessor.postProcessBeforeInitialization(beanName, beanObject);
+            }
+
             //初始化
             if (beanObject instanceof InitializingBean){
                 ((InitializingBean) beanObject).afterPropertiesSet();
+            }
+
+
+            //遍历实现了beanPostProcessor的List，执行初始化后逻辑
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                beanPostProcessor.postProcessAfterInitialization(beanName, beanObject);
             }
 
             return beanObject;
