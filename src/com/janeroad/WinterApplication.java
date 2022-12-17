@@ -13,6 +13,6 @@ public class WinterApplication {
         System.out.println(context.getBean("userService"));
         System.out.println(context.getBean("userService"));
         System.out.println(context.getBean("userService"));
-
+        System.out.println(context.getBean("orderService"));
     }
 }

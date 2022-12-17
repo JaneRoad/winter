@@ -5,6 +5,7 @@ import com.janeroad.winter.annotation.ComponentScan;
 import com.janeroad.winter.annotation.Scope;
 import com.janeroad.winter.enums.ScopeTypeEnum;
 
+import java.beans.Introspector;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -49,6 +50,9 @@ public class WinterApplicationContext {
                             if (clazz.isAnnotationPresent(Component.class)) {
                                 Component componentAnnotation = clazz.getAnnotation(Component.class);
                                 String beanName = componentAnnotation.value();
+                                if ("".equals(beanName)){
+                                    beanName = Introspector.decapitalize(clazz.getSimpleName());
+                                }
                                 BeanDefinition beanDefinition = new BeanDefinition();
                                 beanDefinition.setType(clazz);
                                 if (clazz.isAnnotationPresent(Scope.class)){
