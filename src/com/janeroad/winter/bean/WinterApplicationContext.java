@@ -112,6 +112,12 @@ public class WinterApplicationContext {
                     field.set(beanObject, getBean(field.getName()));
                 }
             }
+
+            // Aware回调
+            if (beanObject instanceof BeanNameAware){
+                ((BeanNameAware) beanObject).setBeanName(beanName);
+            }
+
             return beanObject;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
                  InvocationTargetException e) {
