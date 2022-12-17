@@ -16,11 +16,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WinterApplicationContext {
 
-    private Class configClass;
+    private final Class configClass;
 
-    private ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
 
-    private ConcurrentHashMap<String, Object> singletonBeanMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> singletonBeanMap = new ConcurrentHashMap<>();
 
     public WinterApplicationContext(Class configClass) {
         this.configClass = configClass;
