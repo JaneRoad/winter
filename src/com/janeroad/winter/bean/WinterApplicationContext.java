@@ -137,7 +137,7 @@ public class WinterApplicationContext {
 
             //遍历实现了beanPostProcessor的List，执行初始化前逻辑
             for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
-                beanPostProcessor.postProcessBeforeInitialization(beanName, beanObject);
+                beanObject = beanPostProcessor.postProcessBeforeInitialization(beanName, beanObject);
             }
 
             //初始化
@@ -148,7 +148,7 @@ public class WinterApplicationContext {
 
             //遍历实现了beanPostProcessor的List，执行初始化后逻辑
             for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
-                beanPostProcessor.postProcessAfterInitialization(beanName, beanObject);
+                beanObject = beanPostProcessor.postProcessAfterInitialization(beanName, beanObject);
             }
 
             return beanObject;
